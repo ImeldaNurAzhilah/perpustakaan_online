@@ -25,21 +25,22 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Fungsi koneksi ke database PostgreSQL
-ddef get_db_connection():
-    db_url = os.environ.get('DATABASE_URL')
-    if not db_url:
-        raise Exception("DATABASE_URL not set!")
+def get_db_connection():
+    DATABASE_URL = os.getenv('DATABASE_URL')
 
-    # Parsing DATABASE_URL agar bisa digunakan psycopg2
+    if not DATABASE_URL:
+        raise Exception("DATABASE_URL tidak ditemukan. Cek pengaturan Railway kamu.")
+
     urlparse.uses_netloc.append("postgres")
-    parsed_url = urlparse.urlparse(db_url)
+    db_url = urlparse.urlparse(DATABASE_URL)
 
     return psycopg2.connect(
-        dbname=parsed_url.path[1:],
-        user=parsed_url.username,
-        password=parsed_url.password,
-        host=parsed_url.hostname,
-        port=parsed_url.port
+        dbname=db_url.path[1:],
+        user=db_url.username,
+        password=db_url.password,
+        host=db_url.hostname,
+        port=db_url.port,
+        cursor_factory=RealDictCursor
     )
     
 
