@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import date
 from datetime import datetime
-
+import urllib.parse as urlparse
 
 # Inisialisasi Flask app
 app = Flask(__name__)
@@ -26,10 +26,23 @@ def allowed_file(filename):
 
 # Fungsi koneksi ke database PostgreSQL
 def get_db_connection():
+    DATABASE_URL = os.getenv('DATABASE_URL')
+
+    if not DATABASE_URL:
+        raise Exception("DATABASE_URL tidak ditemukan. Cek pengaturan Railway kamu.")
+
+    urlparse.uses_netloc.append("postgres")
+    db_url = urlparse.urlparse(DATABASE_URL)
+
     return psycopg2.connect(
-        os.environ.get("DATABASE_URL"),
+        dbname=db_url.path[1:],
+        user=db_url.username,
+        password=db_url.password,
+        host=db_url.hostname,
+        port=db_url.port,
         cursor_factory=RealDictCursor
     )
+    
 
 
 # ================== ROUTES ==================
