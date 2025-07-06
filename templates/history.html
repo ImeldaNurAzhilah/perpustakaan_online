@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Riwayat Peminjaman</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #ffe4ec, #f8cdda);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .table-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #d63384;
+      font-weight: bold;
+    }
+    .btn-success {
+      background-color: #d63384;
+      border-color: #d63384;
+    }
+    .btn-success:hover {
+      background-color: #b52c6a;
+      border-color: #b52c6a;
+    }
+    .btn-secondary {
+      border-radius: 50px;
+      color: #d63384;
+      border-color: #d63384;
+    }
+    .btn-secondary:hover {
+      background-color: #d63384;
+      color: white;
+    }
+    .text-danger {
+      font-weight: 500;
+    }
+    .table > :not(caption) > * > * {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Riwayat Peminjaman</h2>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="table-container">
+    <table class="table table-bordered table-striped">
+      <thead class="table-light text-center">
+        <tr>
+          <th>Judul Buku</th>
+          <th>Tanggal Pinjam</th>
+          <th>Tanggal Kembali</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in borrowings %}
+        <tr>
+          <td>{{ b.title }}</td>
+          <td>{{ b.borrow_date }}</td>
+          <td>
+            {% if b.return_date %}
+              {{ b.return_date }}
+            {% else %}
+              <span class="text-danger">Belum dikembalikan</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if not b.return_date %}
+              <form method="post" action="{{ url_for('return_book', borrow_id=b.id) }}">
+                <button class="btn btn-success btn-sm">Kembalikan</button>
+              </form>
+            {% else %}
+              <span class="text-muted">Selesai</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Kembali ke Dashboard</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

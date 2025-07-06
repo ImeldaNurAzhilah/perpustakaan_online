@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Buku</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #ffe4ec, #f8cdda);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    h2 {
+      color: #d63384;
+    }
+    .card {
+      border-radius: 16px;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.02);
+    }
+    .badge-category {
+      background-color: #f8d7da;
+      color: #b71c5a;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      display: inline-block;
+    }
+    .btn-pink {
+      color: #d63384;
+      border-color: #d63384;
+    }
+    .btn-pink:hover {
+      background-color: #d63384;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Daftar Buku</h2>
+
+  <!-- Form Pencarian dan Filter -->
+  <form method="get" class="row mb-4 justify-content-center">
+    <div class="col-md-3">
+      <input type="text" name="q" class="form-control" placeholder="Cari judul atau pengarang..." value="{{ keyword }}">
+    </div>
+    <div class="col-md-2">
+      <select name="stock" class="form-select">
+        <option value="">Semua Stok</option>
+        <option value="available" {% if filter_stock == 'available' %}selected{% endif %}>Tersedia</option>
+        <option value="empty" {% if filter_stock == 'empty' %}selected{% endif %}>Habis</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select name="category" class="form-select">
+        <option value="">Semua Kategori</option>
+        {% for c in categories %}
+          <option value="{{ c }}" {% if category == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-outline-primary w-100">🔍 Cari</button>
+    </div>
+  </form>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Jika Tidak Ada Buku -->
+  {% if books|length == 0 %}
+    <div class="alert alert-warning text-center">⚠️ Tidak ada buku yang cocok dengan pencarian.</div>
+  {% endif %}
+
+  <!-- Daftar Buku -->
+  <div class="row">
+    {% for book in books %}
+    <div class="col-md-4">
+      <a href="{{ url_for('book_detail', book_id=book.id) }}" class="text-decoration-none text-dark">
+        <div class="card mb-4 shadow-sm h-100">
+        {% if book.image_url %}
+          <img src="{{ book.image_url }}" class="card-img-top" alt="Gambar Buku" style="height: 200px; object-fit: cover;">
+        {% else %}
+          <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="Tidak ada gambar" style="height: 200px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body">
+          {% if book.category %}
+            <span class="badge-category">{{ book.category }}</span>
+          {% endif %}
+          <h5 class="card-title">
+            <a href="{{ url_for('book_detail', book_id=book.id) }}" class="text-decoration-none text-dark">
+              {{ book.title }}
+            </a>
+          </h5>
+          <h6 class="card-subtitle text-muted mb-2">oleh {{ book.author }}</h6>
+          <p class="mb-3">Stok: <strong>{{ book.stock }}</strong></p>
+
+          {% if session.get('user_id') %}
+          <form action="{{ url_for('borrow', book_id=book.id) }}" method="post">
+            <button type="submit" class="btn btn-outline-pink btn-pink w-100">Pinjam</button>
+          </form>
+          {% else %}
+          <p class="text-danger text-center"><em>Login dulu untuk pinjam</em></p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Kembali ke Dashboard -->
+  <div class="text-center mt-4">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary rounded-pill">← Kembali ke Dashboard</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

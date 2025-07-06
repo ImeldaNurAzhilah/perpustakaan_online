@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Perpustakaan</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #ffe4ec, #f8cdda);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #d63384;
+      font-weight: bold;
+    }
+
+    .btn-custom {
+      border-radius: 30px;
+      padding: 10px 20px;
+      font-weight: 500;
+      transition: 0.3s ease-in-out;
+    }
+
+    .btn-pink {
+      color: #d63384;
+      border: 2px solid #d63384;
+      background-color: transparent;
+    }
+
+    .btn-pink:hover {
+      background-color: #d63384;
+      color: white;
+    }
+
+    .btn-outline-danger {
+      border-radius: 30px;
+    }
+
+    .alert {
+      margin-top: 15px;
+    }
+
+    .welcome-text {
+      font-size: 1.1rem;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="dashboard-card text-center">
+      <h2 class="mb-2">PERPUSTAKAAN</h2>
+      <p class="welcome-text">Selamat datang, <strong>{{ user.full_name }}</strong>!</p>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="d-grid gap-3 mt-4">
+        <a href="{{ url_for('books') }}" class="btn btn-pink btn-custom">Lihat Buku</a>
+        <a href="{{ url_for('history') }}" class="btn btn-pink btn-custom">Riwayat Peminjaman</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-custom">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

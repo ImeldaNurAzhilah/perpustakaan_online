@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Detail Buku</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #ffe4ec, #f8cdda);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .badge-category {
+      background-color: #f8d7da;
+      color: #b71c5a;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="card p-4">
+    
+    <!-- Gambar Buku -->
+    {% if book.image_url %}
+      <img src="{{ url_for('static', filename=book.image_url[7:]) }}" 
+           class="card-img-top mb-4 rounded"
+           style="max-height: 400px; object-fit: contain;" 
+           alt="Gambar Buku">
+    {% else %}
+      <img src="https://via.placeholder.com/400x300?text=No+Image" 
+           class="card-img-top mb-4 rounded"
+           style="max-height: 400px; object-fit: contain;" 
+           alt="Tidak ada gambar">
+    {% endif %}
+
+    <!-- Informasi Buku -->
+    <h3 class="text-center text-dark">{{ book.title }}</h3>
+    <h5 class="text-center text-muted mb-3">oleh {{ book.author }}</h5>
+
+    {% if book.category %}
+      <p class="text-center">
+        <span class="badge badge-category">{{ book.category }}</span>
+      </p>
+    {% endif %}
+
+    <p><strong>Deskripsi:</strong><br>{{ book.description or "Tidak ada deskripsi tersedia." }}</p>
+    <p><strong>Stok tersedia:</strong> {{ book.stock }}</p>
+
+    <!-- FORM PEMINJAMAN -->
+{% if session.get('user_id') %}
+  {% if book.stock > 0 %}
+    <form action="{{ url_for('borrow', book_id=book.id) }}" method="post" class="text-center mt-4">
+      <button type="submit" class="btn btn-outline-primary rounded-pill px-4">
+        Pinjam Buku Ini
+      </button>
+    </form>
+  {% else %}
+    <div class="alert alert-warning text-center mt-4">❌ Buku ini sedang tidak tersedia.</div>
+  {% endif %}
+{% else %}
+  <p class="text-danger text-center mt-4"><em>Login terlebih dahulu untuk meminjam buku ini.</em></p>
+{% endif %}
+
+    <!-- Tombol Kembali -->
+    <div class="text-center mt-4">
+      <a href="{{ url_for('books') }}" class="btn btn-outline-secondary rounded-pill">
+        ← Kembali ke Daftar Buku
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

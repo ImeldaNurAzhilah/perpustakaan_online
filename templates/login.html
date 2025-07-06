@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Perpustakaan Online</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #ffe4ec, #f8cdda);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .card {
+      background-color: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    h3 {
+      color: #d63384;
+    }
+  </style>
+</head>
+<body>
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card col-md-4">
+      <h3 class="text-center mb-4">Login</h3>
+
+      <!-- Flash message (jika digunakan di backend) -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control rounded-pill" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control rounded-pill" required>
+        </div>
+        <button class="btn btn-pink w-100 rounded-pill text-white" style="background-color: #d63384;">Login</button>
+        <div class="text-center mt-3">
+          <a href="{{ url_for('register') }}">Belum punya akun? Register</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
