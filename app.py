@@ -27,12 +27,10 @@ def allowed_file(filename):
 # Fungsi koneksi ke database PostgreSQL
 def get_db_connection():
     return psycopg2.connect(
-        host='db',  # Sesuaikan jika tidak pakai Docker (localhost misalnya)
-        dbname='perpustakaan_online',
-        user='perpustakaan',
-        password='password123',
+        os.environ.get("DATABASE_URL"),
         cursor_factory=RealDictCursor
     )
+
 
 # ================== ROUTES ==================
 
